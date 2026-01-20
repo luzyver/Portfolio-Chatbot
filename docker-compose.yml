@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # Ollama Service - Self-hosted LLM
+  ollama:
+    image: ollama/ollama:latest
+    container_name: portfolio-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
+
+  # FastAPI Application
+  chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portfolio-chatbot
+    ports:
+      - "9999:9999"
+    volumes:
+      # Hot reload untuk development
+      - ./app:/app
+      # Persist ChromaDB data
+      - chroma_data:/app/chroma_db
+      # Portfolio data
+      - ./app/data:/app/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - LLM_MODEL=mistral
+      - CHROMA_PERSIST_DIR=/app/chroma_db
+      - PYTHONPATH=/app
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9999/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+    # Development mode with hot reload
+    command: uvicorn main:app --host 0.0.0.0 --port 9999 --reload
+
+volumes:
+  # Volume untuk menyimpan Ollama models
+  ollama_data:
+    name: portfolio_ollama_data
+  # Volume untuk menyimpan ChromaDB embeddings
+  chroma_data:
+    name: portfolio_chroma_data
+
+networks:
+  default:
+    name: portfolio_network

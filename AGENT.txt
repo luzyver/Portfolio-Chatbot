@@ -1,0 +1,95 @@
+Buatkan portfolio chatbot dengan spesifikasi berikut:
+
+Tech Stack:
+
+Backend: Python dengan FastAPI
+
+LLM: Ollama (model Mistral) - self-hosted tanpa API eksternal
+
+RAG: LangChain + ChromaDB untuk vector store
+
+Embeddings: sentence-transformers/all-MiniLM-L6-v2 (HuggingFace)
+
+Deployment: Docker Compose
+
+Requirements:
+
+FastAPI app dengan endpoint:
+
+POST /chat - untuk chat dengan bot
+
+GET /health - health check
+
+POST /reload-data - reload portfolio data
+
+CORS enabled untuk frontend integration
+
+RAG System:
+
+Load data dari file txt berisi informasi portfolio (skills, projects, experience)
+
+Split dokumen dengan RecursiveCharacterTextSplitter (chunk_size=500, overlap=50)
+
+Store embeddings di ChromaDB (persist local)
+
+Retriever dengan k=3 dokumen terdekat
+
+LLM Integration:
+
+Connect ke Ollama service (http://ollama:11434)
+
+Custom prompt template dalam Bahasa Indonesia
+
+System instruction: "Jawab HANYA dari konteks portfolio, jika tidak ada info katakan tidak tersedia, jangan mengarang"
+
+Return response + source documents
+
+Docker Compose setup:
+
+Service 1: Ollama container dengan health check
+
+Service 2: FastAPI app dengan hot reload
+
+Volume untuk Ollama models dan ChromaDB persistence
+
+Environment variables: OLLAMA_BASE_URL, LLM_MODEL
+
+Project structure:
+
+text
+app/
+├── main.py (FastAPI app)
+├── models.py (Pydantic models)
+├── rag/
+│   ├── embeddings.py
+│   ├── vector_store.py
+│   └── llm.py
+└── data/
+    └── portfolio.txt
+Output yang diharapkan:
+
+Complete working code untuk semua files
+
+Dockerfile dengan embedding model pre-download
+
+docker-compose.yml dengan service dependencies
+
+requirements.txt lengkap
+
+Example portfolio.txt template
+
+Deployment instructions (build, run, pull Mistral model)
+
+Constraints:
+
+Harus fully offline setelah setup (no external API calls)
+
+Response dalam Bahasa Indonesia
+
+Include error handling dan logging
+
+FastAPI dengan auto documentation (Swagger)
+
+Copy prompt ini ke AI code generator seperti Claude, GPT-4, atau Cursor IDE untuk generate full implementation.
+​
+​
