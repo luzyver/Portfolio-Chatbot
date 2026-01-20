@@ -1,0 +1,351 @@
+{
+    "personal_info": {
+        "name": "[Nama Lengkap Anda]",
+        "title": "Full Stack Developer",
+        "location": "Jakarta, Indonesia",
+        "email": "email@example.com",
+        "linkedin": "linkedin.com/in/username",
+        "github": "github.com/username",
+        "website": "www.portfolio.com"
+    },
+    "summary": "Saya adalah seorang Full Stack Developer dengan pengalaman lebih dari 5 tahun dalam mengembangkan aplikasi web dan mobile. Saya memiliki passion dalam membangun solusi teknologi yang efisien dan user-friendly. Spesialisasi saya meliputi pengembangan backend dengan Python dan Node.js, serta frontend dengan React dan Vue.js.",
+    "skills": {
+        "programming_languages": [
+            {
+                "name": "Python",
+                "level": "Expert",
+                "years": 5
+            },
+            {
+                "name": "JavaScript/TypeScript",
+                "level": "Expert",
+                "years": 5
+            },
+            {
+                "name": "Go",
+                "level": "Intermediate",
+                "years": 2
+            },
+            {
+                "name": "SQL",
+                "level": "Advanced",
+                "years": 4
+            }
+        ],
+        "backend_frameworks": [
+            {
+                "name": "FastAPI",
+                "description": "Framework Python favorit untuk membangun API"
+            },
+            {
+                "name": "Django",
+                "description": "Untuk aplikasi web full-stack"
+            },
+            {
+                "name": "Express.js",
+                "description": "Node.js backend development"
+            },
+            {
+                "name": "NestJS",
+                "description": "Enterprise-grade Node.js applications"
+            }
+        ],
+        "frontend_frameworks": [
+            {
+                "name": "React.js",
+                "description": "Library utama untuk membangun UI"
+            },
+            {
+                "name": "Vue.js",
+                "description": "Alternative framework untuk proyek tertentu"
+            },
+            {
+                "name": "Next.js",
+                "description": "React framework untuk SSR dan SSG"
+            },
+            {
+                "name": "Tailwind CSS",
+                "description": "Utility-first CSS framework"
+            }
+        ],
+        "databases": [
+            {
+                "name": "PostgreSQL",
+                "description": "Database relasional utama"
+            },
+            {
+                "name": "MongoDB",
+                "description": "NoSQL database untuk data fleksibel"
+            },
+            {
+                "name": "Redis",
+                "description": "Caching dan session storage"
+            },
+            {
+                "name": "Elasticsearch",
+                "description": "Full-text search engine"
+            }
+        ],
+        "devops": [
+            {
+                "name": "Docker & Kubernetes",
+                "description": "Container orchestration"
+            },
+            {
+                "name": "AWS",
+                "services": [
+                    "EC2",
+                    "S3",
+                    "Lambda",
+                    "RDS"
+                ],
+                "description": "Cloud infrastructure"
+            },
+            {
+                "name": "Google Cloud Platform",
+                "description": "Alternative cloud provider"
+            },
+            {
+                "name": "CI/CD",
+                "tools": [
+                    "GitHub Actions",
+                    "GitLab CI"
+                ]
+            }
+        ],
+        "ai_ml": [
+            {
+                "name": "LangChain",
+                "description": "Framework untuk aplikasi LLM"
+            },
+            {
+                "name": "OpenAI API",
+                "description": "Integrasi dengan GPT models"
+            },
+            {
+                "name": "Hugging Face",
+                "description": "Model dan embeddings"
+            },
+            {
+                "name": "Vector Databases",
+                "tools": [
+                    "ChromaDB",
+                    "Pinecone"
+                ]
+            }
+        ]
+    },
+    "work_experience": [
+        {
+            "position": "Senior Full Stack Developer",
+            "company": "PT Tech Inovasi Indonesia",
+            "period": {
+                "start": "2022-01",
+                "end": null,
+                "current": true
+            },
+            "responsibilities": [
+                "Memimpin tim pengembangan yang terdiri dari 5 developer",
+                "Merancang arsitektur microservices untuk aplikasi e-commerce",
+                "Mengimplementasikan CI/CD pipeline yang mengurangi deployment time 60%",
+                "Mengembangkan fitur AI chatbot menggunakan LangChain dan OpenAI"
+            ],
+            "technologies": [
+                "Python",
+                "FastAPI",
+                "React",
+                "PostgreSQL",
+                "Docker",
+                "AWS"
+            ]
+        },
+        {
+            "position": "Full Stack Developer",
+            "company": "Startup Digital Nusantara",
+            "period": {
+                "start": "2019-06",
+                "end": "2021-12",
+                "current": false
+            },
+            "responsibilities": [
+                "Mengembangkan platform marketplace dari awal hingga production",
+                "Membangun RESTful API yang melayani 10.000+ request per hari",
+                "Mengoptimasi database query yang meningkatkan performa 40%",
+                "Berkolaborasi dengan tim product untuk fitur-fitur baru"
+            ],
+            "technologies": [
+                "Node.js",
+                "Express",
+                "Vue.js",
+                "MongoDB",
+                "Redis"
+            ]
+        },
+        {
+            "position": "Junior Developer",
+            "company": "Software House ABC",
+            "period": {
+                "start": "2018-01",
+                "end": "2019-05",
+                "current": false
+            },
+            "responsibilities": [
+                "Mengembangkan website company profile untuk berbagai klien",
+                "Maintenance dan bug fixing untuk aplikasi existing",
+                "Belajar best practices dalam software development"
+            ],
+            "technologies": [
+                "PHP",
+                "Laravel",
+                "jQuery",
+                "MySQL"
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "name": "TokoKu",
+            "type": "E-Commerce Platform",
+            "description": "Platform e-commerce lengkap dengan fitur marketplace, payment gateway, dan sistem inventory",
+            "technologies": [
+                "FastAPI",
+                "React",
+                "PostgreSQL",
+                "Redis",
+                "Stripe",
+                "Docker"
+            ],
+            "features": [
+                "Multi-vendor marketplace",
+                "Real-time inventory management",
+                "Payment integration dengan Stripe dan Midtrans",
+                "Admin dashboard untuk analytics"
+            ],
+            "link": "github.com/username/tokoku"
+        },
+        {
+            "name": "AI Chatbot Customer Service",
+            "type": "AI Application",
+            "description": "Chatbot berbasis AI untuk customer service menggunakan RAG (Retrieval-Augmented Generation)",
+            "technologies": [
+                "Python",
+                "LangChain",
+                "OpenAI",
+                "ChromaDB",
+                "FastAPI"
+            ],
+            "features": [
+                "Knowledge base dari dokumen perusahaan",
+                "Multi-language support (Indonesia & English)",
+                "Handover ke human agent jika diperlukan",
+                "Analytics dashboard untuk conversation insights"
+            ],
+            "link": "github.com/username/ai-chatbot"
+        },
+        {
+            "name": "TaskFlow",
+            "type": "Task Management App",
+            "description": "Aplikasi manajemen tugas dengan fitur kolaborasi tim real-time",
+            "technologies": [
+                "Next.js",
+                "Node.js",
+                "MongoDB",
+                "Socket.io"
+            ],
+            "features": [
+                "Kanban board dengan drag-and-drop",
+                "Real-time collaboration",
+                "Notification system",
+                "Time tracking dan reporting"
+            ],
+            "link": "github.com/username/taskflow"
+        },
+        {
+            "name": "Personal Finance Tracker",
+            "type": "Mobile App",
+            "description": "Aplikasi mobile untuk tracking keuangan pribadi",
+            "technologies": [
+                "React Native",
+                "Firebase",
+                "Chart.js"
+            ],
+            "features": [
+                "Income dan expense tracking",
+                "Budget planning",
+                "Visual reports dan charts",
+                "Export ke PDF/Excel"
+            ],
+            "link": "github.com/username/finance-tracker"
+        }
+    ],
+    "education": [
+        {
+            "institution": "Universitas Indonesia",
+            "degree": "Sarjana Komputer (S.Kom)",
+            "major": "Ilmu Komputer",
+            "period": {
+                "start": "2014",
+                "end": "2018"
+            },
+            "gpa": 3.75,
+            "gpa_scale": 4.0,
+            "activities": [
+                "Asisten Praktikum Algoritma dan Pemrograman",
+                "Anggota aktif komunitas programming kampus",
+                "Juara 2 Hackathon Tingkat Universitas 2017"
+            ]
+        }
+    ],
+    "certifications": [
+        {
+            "name": "AWS Certified Solutions Architect - Associate",
+            "year": 2023,
+            "issuer": "Amazon Web Services"
+        },
+        {
+            "name": "Google Cloud Professional Cloud Developer",
+            "year": 2022,
+            "issuer": "Google"
+        },
+        {
+            "name": "MongoDB Certified Developer",
+            "year": 2021,
+            "issuer": "MongoDB"
+        },
+        {
+            "name": "Meta React Developer Certificate",
+            "year": 2021,
+            "issuer": "Meta"
+        }
+    ],
+    "languages": [
+        {
+            "language": "Bahasa Indonesia",
+            "proficiency": "Native"
+        },
+        {
+            "language": "Bahasa Inggris",
+            "proficiency": "Professional Working Proficiency",
+            "score": "TOEFL iBT: 95"
+        },
+        {
+            "language": "Bahasa Jepang",
+            "proficiency": "Elementary",
+            "level": "N5"
+        }
+    ],
+    "interests": [
+        "Kontribusi open source di GitHub",
+        "Menulis artikel teknis di Medium dan Dev.to",
+        "Mengikuti tech meetup dan konferensi",
+        "Bermain game dan membaca buku teknologi"
+    ],
+    "availability": {
+        "open_for": [
+            "Freelance projects",
+            "Konsultasi teknis",
+            "Kolaborasi open source",
+            "Mentoring untuk developer junior"
+        ]
+    }
+}

@@ -18,28 +18,13 @@ class ChatRequest(BaseModel):
         }
 
 
-class SourceDocument(BaseModel):
-    content: str = Field(..., description="Isi konten dokumen")
-    metadata: Optional[dict] = Field(default=None, description="Metadata dokumen")
-
-
 class ChatResponse(BaseModel):
     response: str = Field(..., description="Jawaban dari chatbot")
-    sources: List[SourceDocument] = Field(
-        default=[],
-        description="Dokumen sumber yang digunakan untuk menjawab"
-    )
 
     class Config:
         json_schema_extra = {
             "example": {
-                "response": "Saya memiliki skill dalam Python, JavaScript, dan FastAPI.",
-                "sources": [
-                    {
-                        "content": "Skills: Python, JavaScript, FastAPI...",
-                        "metadata": {"source": "portfolio.txt"}
-                    }
-                ]
+                "response": "Saya memiliki skill dalam Python, JavaScript, dan FastAPI."
             }
         }
 

@@ -9,7 +9,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from models import (
     ChatRequest,
     ChatResponse,
-    SourceDocument,
     HealthResponse,
     ReloadResponse,
     ErrorResponse
@@ -24,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
-PORTFOLIO_FILE = DATA_DIR / "portfolio.txt"
+PORTFOLIO_FILE = DATA_DIR / "portfolio.json"
 CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", str(BASE_DIR / "chroma_db"))
 
 vector_store_manager: VectorStoreManager = None
@@ -114,17 +113,9 @@ async def chat(request: ChatRequest):
     try:
         logger.info(f"Received chat request: {request.message[:50]}...")
 
-        response, source_docs = llm_manager.chat(request.message)
+        response, _ = llm_manager.chat(request.message)
 
-        sources = [
-            SourceDocument(
-                content=doc.page_content[:500],
-                metadata=doc.metadata
-            )
-            for doc in source_docs
-        ]
-
-        return ChatResponse(response=response, sources=sources)
+        return ChatResponse(response=response)
 
     except Exception as e:
         logger.error(f"Chat error: {str(e)}")
