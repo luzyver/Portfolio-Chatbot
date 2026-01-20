@@ -1,7 +1,3 @@
-"""
-Portfolio Chatbot - FastAPI Application
-RAG-based chatbot menggunakan Groq API dan ChromaDB
-"""
 import os
 import logging
 from contextlib import asynccontextmanager
@@ -20,37 +16,29 @@ from models import (
 )
 from rag import VectorStoreManager, LLMManager
 
-# Konfigurasi logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# Konfigurasi paths
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 PORTFOLIO_FILE = DATA_DIR / "portfolio.txt"
 CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", str(BASE_DIR / "chroma_db"))
 
-# Global managers
 vector_store_manager: VectorStoreManager = None
 llm_manager: LLMManager = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Lifespan context manager untuk startup dan shutdown.
-    """
     global vector_store_manager, llm_manager
 
     logger.info("Starting Portfolio Chatbot...")
 
-    # Inisialisasi Vector Store Manager
     vector_store_manager = VectorStoreManager(persist_directory=CHROMA_PERSIST_DIR)
 
-    # Coba load vector store yang sudah ada, atau buat baru
     existing_store = vector_store_manager.load_existing_vector_store()
 
     if existing_store is None:
@@ -66,7 +54,6 @@ async def lifespan(app: FastAPI):
     else:
         logger.info("Using existing vector store")
 
-    # Inisialisasi LLM Manager
     llm_manager = LLMManager(vector_store_manager)
 
     try:
@@ -81,11 +68,9 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    # Cleanup on shutdown
     logger.info("Shutting down Portfolio Chatbot...")
 
 
-# Inisialisasi FastAPI app
 app = FastAPI(
     title="Portfolio Chatbot API",
     description="RAG-based chatbot untuk menjawab pertanyaan tentang portfolio menggunakan Groq API dan ChromaDB",
@@ -96,10 +81,9 @@ app = FastAPI(
     }
 )
 
-# CORS middleware untuk frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Dalam production, ganti dengan domain spesifik
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -113,13 +97,6 @@ app.add_middleware(
     description="Kirim pertanyaan dan dapatkan jawaban berdasarkan informasi portfolio"
 )
 async def chat(request: ChatRequest):
-    """
-    Endpoint untuk chat dengan portfolio bot.
-
-    - **message**: Pertanyaan atau pesan dari user
-
-    Returns response beserta source documents yang digunakan.
-    """
     global llm_manager, vector_store_manager
 
     if llm_manager is None:
@@ -137,13 +114,11 @@ async def chat(request: ChatRequest):
     try:
         logger.info(f"Received chat request: {request.message[:50]}...")
 
-        # Proses pertanyaan
         response, source_docs = llm_manager.chat(request.message)
 
-        # Format source documents
         sources = [
             SourceDocument(
-                content=doc.page_content[:500],  # Limit content length
+                content=doc.page_content[:500],
                 metadata=doc.metadata
             )
             for doc in source_docs
@@ -166,20 +141,10 @@ async def chat(request: ChatRequest):
     description="Cek status kesehatan aplikasi dan dependensi"
 )
 async def health_check():
-    """
-    Endpoint untuk health check (lightweight).
-
-    Mengecek status:
-    - Aplikasi
-    - Vector Store
-    - Groq (hanya cek apakah manager sudah di-inisialisasi, tanpa test connection)
-    """
     global llm_manager, vector_store_manager
 
-    # Check Groq status (lightweight - tanpa test connection yang blocking)
     groq_status = "initialized" if llm_manager is not None and llm_manager.llm is not None else "not_initialized"
 
-    # Check vector store status
     vector_store_status = "not_initialized"
     if vector_store_manager is not None:
         if vector_store_manager.is_ready():
@@ -187,7 +152,6 @@ async def health_check():
         else:
             vector_store_status = "empty"
 
-    # Determine overall status
     if groq_status == "initialized" and vector_store_status == "ready":
         status = "healthy"
     elif groq_status == "not_initialized" or vector_store_status in ["not_initialized", "empty"]:
@@ -209,12 +173,6 @@ async def health_check():
     description="Reload data portfolio dari file dan rebuild vector store"
 )
 async def reload_data():
-    """
-    Endpoint untuk reload data portfolio.
-
-    Akan membaca ulang file portfolio.txt dan membangun ulang vector store.
-    Berguna setelah update data portfolio.
-    """
     global vector_store_manager, llm_manager
 
     if vector_store_manager is None:
@@ -232,10 +190,8 @@ async def reload_data():
     try:
         logger.info("Reloading portfolio data...")
 
-        # Reload data
         docs_count = vector_store_manager.reload_data(str(PORTFOLIO_FILE))
 
-        # Refresh LLM chain
         if llm_manager is not None:
             llm_manager.refresh_chain()
 
@@ -257,7 +213,6 @@ async def reload_data():
 
 @app.get("/", summary="Root", description="Welcome endpoint")
 async def root():
-    """Welcome endpoint."""
     return {
         "message": "Selamat datang di Portfolio Chatbot API!",
         "docs": "/docs",

@@ -1,12 +1,8 @@
-"""
-Pydantic models untuk Portfolio Chatbot API
-"""
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
 class ChatRequest(BaseModel):
-    """Request model untuk endpoint /chat"""
     message: str = Field(
         ...,
         description="Pertanyaan atau pesan dari user",
@@ -23,13 +19,11 @@ class ChatRequest(BaseModel):
 
 
 class SourceDocument(BaseModel):
-    """Model untuk dokumen sumber yang digunakan dalam response"""
     content: str = Field(..., description="Isi konten dokumen")
     metadata: Optional[dict] = Field(default=None, description="Metadata dokumen")
 
 
 class ChatResponse(BaseModel):
-    """Response model untuk endpoint /chat"""
     response: str = Field(..., description="Jawaban dari chatbot")
     sources: List[SourceDocument] = Field(
         default=[],
@@ -51,7 +45,6 @@ class ChatResponse(BaseModel):
 
 
 class HealthResponse(BaseModel):
-    """Response model untuk endpoint /health"""
     status: str = Field(..., description="Status kesehatan aplikasi")
     groq_status: str = Field(..., description="Status koneksi Groq")
     vector_store_status: str = Field(..., description="Status vector store")
@@ -67,7 +60,6 @@ class HealthResponse(BaseModel):
 
 
 class ReloadResponse(BaseModel):
-    """Response model untuk endpoint /reload-data"""
     status: str = Field(..., description="Status reload")
     message: str = Field(..., description="Pesan detail")
     documents_loaded: int = Field(..., description="Jumlah dokumen yang di-load")
@@ -83,6 +75,5 @@ class ReloadResponse(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    """Response model untuk error"""
     error: str = Field(..., description="Pesan error")
     detail: Optional[str] = Field(default=None, description="Detail error")

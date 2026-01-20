@@ -1,84 +1,63 @@
 # Portfolio Chatbot
 
-RAG-based chatbot untuk menjawab pertanyaan tentang portfolio menggunakan Ollama (Mistral) dan ChromaDB.
+RAG-based chatbot untuk menjawab pertanyaan tentang portfolio menggunakan Groq API dan ChromaDB.
 
 ## Tech Stack
 
 - **Backend**: Python dengan FastAPI
-- **LLM**: Ollama (model Mistral) - self-hosted
+- **LLM**: Groq API (Llama 4 / Llama 3.3 dengan auto-fallback)
 - **RAG**: LangChain + ChromaDB
-- **Embeddings**: sentence-transformers/all-MiniLM-L6-v2
+- **Embeddings**: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 - **Deployment**: Docker Compose
 
 ## Project Structure
 
 ```
 ├── app/
-│   ├── main.py           # FastAPI application
-│   ├── models.py         # Pydantic models
+│   ├── main.py
+│   ├── models.py
 │   ├── rag/
 │   │   ├── __init__.py
-│   │   ├── embeddings.py # HuggingFace embeddings
-│   │   ├── vector_store.py # ChromaDB vector store
-│   │   └── llm.py        # Ollama LLM integration
+│   │   ├── embeddings.py
+│   │   ├── vector_store.py
+│   │   └── llm.py
 │   └── data/
-│       └── portfolio.txt # Portfolio data
+│       └── portfolio.txt
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
 └── README.md
 ```
 
-## Deployment Instructions
+## Deployment
 
 ### Prerequisites
 
-- Docker dan Docker Compose terinstall
-- Minimal 8GB RAM (untuk Ollama + Mistral model)
-- 10GB+ disk space
+- Docker dan Docker Compose
+- Groq API Key (gratis di https://console.groq.com)
 
-### Step 1: Clone dan Setup
+### Setup
 
 ```bash
-# Clone repository (atau copy files)
+# Clone repository
 cd portfolio-chatbot
 
-# Edit portfolio.txt dengan data Anda
+# Copy dan edit environment
+cp .env.example .env
+nano .env  # Masukkan GROQ_API_KEY
+
+# Edit portfolio data
 nano app/data/portfolio.txt
+
+# Build dan start
+docker compose build
+docker compose up -d
 ```
 
-### Step 2: Build Docker Images
+### Verify
 
 ```bash
-# Build images
-docker-compose build
-```
-
-### Step 3: Start Services
-
-```bash
-# Start semua services
-docker-compose up -d
-```
-
-### Step 4: Pull Mistral Model
-
-Setelah services running, pull model Mistral ke Ollama:
-
-```bash
-# Masuk ke container Ollama
-docker exec -it portfolio-ollama ollama pull mistral
-
-# Atau langsung dari host
-docker exec portfolio-ollama ollama pull mistral
-```
-
-Tunggu hingga download selesai (sekitar 4GB).
-
-### Step 5: Verify Installation
-
-```bash
-# Check health status
+# Health check
 curl http://localhost:9999/health
 
 # Test chat
@@ -90,44 +69,30 @@ curl -X POST http://localhost:9999/chat \
 ## API Endpoints
 
 ### POST /chat
-Chat dengan portfolio bot.
 
-**Request:**
 ```json
-{
-  "message": "Apa pengalaman kerja kamu?"
-}
-```
+// Request
+{"message": "Apa pengalaman kerja kamu?"}
 
-**Response:**
-```json
+// Response
 {
-  "response": "Saya memiliki pengalaman sebagai Senior Full Stack Developer di PT Tech Inovasi Indonesia sejak Januari 2022...",
-  "sources": [
-    {
-      "content": "=== PENGALAMAN KERJA ===...",
-      "metadata": {"source": "portfolio.txt"}
-    }
-  ]
+  "response": "Saya memiliki pengalaman sebagai...",
+  "sources": [{"content": "...", "metadata": {"source": "portfolio.txt"}}]
 }
 ```
 
 ### GET /health
-Health check endpoint.
 
-**Response:**
 ```json
 {
   "status": "healthy",
-  "ollama_status": "connected",
+  "groq_status": "initialized",
   "vector_store_status": "ready"
 }
 ```
 
 ### POST /reload-data
-Reload portfolio data.
 
-**Response:**
 ```json
 {
   "status": "success",
@@ -136,78 +101,21 @@ Reload portfolio data.
 }
 ```
 
-## Swagger Documentation
-
-Akses dokumentasi API di: `http://localhost:9999/docs`
-
-## Commands Cheat Sheet
+## Commands
 
 ```bash
-# Start services
-docker-compose up -d
-
-# Stop services
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# View chatbot logs only
-docker-compose logs -f chatbot
-
-# Restart chatbot setelah update code
-docker-compose restart chatbot
-
-# Rebuild setelah update requirements
-docker-compose build --no-cache chatbot
-docker-compose up -d
-
-# Pull model Mistral
-docker exec portfolio-ollama ollama pull mistral
-
-# List models di Ollama
-docker exec portfolio-ollama ollama list
-
-# Hapus semua data dan mulai fresh
-docker-compose down -v
-docker-compose up -d
+docker compose up -d          # Start
+docker compose down           # Stop
+docker compose logs -f        # View logs
+docker compose restart        # Restart
+docker compose build --no-cache && docker compose up -d  # Rebuild
 ```
 
 ## Update Portfolio Data
 
-1. Edit file `app/data/portfolio.txt`
-2. Call endpoint reload:
-   ```bash
-   curl -X POST http://localhost:9999/reload-data
-   ```
+1. Edit `app/data/portfolio.txt`
+2. Reload: `curl -X POST http://localhost:9999/reload-data`
 
-## Troubleshooting
+## API Docs
 
-### Ollama tidak connected
-```bash
-# Check Ollama health
-curl http://localhost:11434/api/tags
-
-# Restart Ollama
-docker-compose restart ollama
-```
-
-### Vector store empty
-```bash
-# Reload data
-curl -X POST http://localhost:9999/reload-data
-```
-
-### Out of memory
-Edit `docker-compose.yml` dan sesuaikan memory limits.
-
-## Offline Usage
-
-Setelah setup selesai, chatbot dapat berjalan fully offline:
-- Embedding model sudah di-download saat build Docker image
-- Mistral model sudah tersimpan di volume Ollama
-- Tidak ada API call ke external services
-
-## License
-
-MIT License
+Swagger UI: http://localhost:9999/docs

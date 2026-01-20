@@ -1,40 +1,26 @@
 services:
-  # FastAPI Application
   chatbot:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: portfolio-chatbot
     ports:
-      - "9999:9999"
+      - "127.0.0.1:9999:9999"
     volumes:
-      # Hot reload untuk development
       - ./app:/app
-      # Persist ChromaDB data
-      - chroma_data:/app/chroma_db
-      # Portfolio data
-      - ./app/data:/app/data
     environment:
       - GROQ_API_KEY=${GROQ_API_KEY}
-      - GROQ_MODEL=whisper-large-v3-turbo
       - CHROMA_PERSIST_DIR=/app/chroma_db
       - PYTHONPATH=/app
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9999/health"]
-      interval: 30s
-      timeout: 10s
+      interval: 3600s
       retries: 3
       start_period: 120s
     restart: unless-stopped
-    # Production mode with multiple workers for handling concurrent requests
     networks:
       - default
       - npm_default
-
-volumes:
-  # Volume untuk menyimpan ChromaDB embeddings
-  chroma_data:
-    name: portfolio_chroma_data
 
 networks:
   default:
