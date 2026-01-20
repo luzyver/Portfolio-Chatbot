@@ -7,9 +7,9 @@ import logging
 from typing import List, Tuple, Optional
 
 from langchain_community.llms import Ollama
-from langchain.prompts import PromptTemplate
-from langchain.chains import RetrievalQA
-from langchain.schema import Document
+from langchain_core.prompts import PromptTemplate
+from langchain_classic.chains import RetrievalQA
+from langchain_core.documents import Document
 
 from .vector_store import VectorStoreManager
 
@@ -76,8 +76,9 @@ class LLMManager:
         self.llm = Ollama(
             base_url=self.base_url,
             model=self.model,
-            temperature=0.3,  # Lower temperature untuk jawaban yang lebih fokus
-            num_predict=512,  # Max tokens untuk response
+            temperature=0.3,
+            num_predict=256,
+            num_ctx=512,
         )
 
         logger.info("Ollama LLM berhasil di-inisialisasi")

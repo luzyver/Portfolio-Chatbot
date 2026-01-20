@@ -12,7 +12,7 @@ services:
     environment:
       - OLLAMA_HOST=0.0.0.0
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      test: ["CMD", "ollama", "list"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -42,7 +42,7 @@ services:
       - ./app/data:/app/data
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-      - LLM_MODEL=mistral
+      - LLM_MODEL=qwen2:0.5b
       - CHROMA_PERSIST_DIR=/app/chroma_db
       - PYTHONPATH=/app
     depends_on:
@@ -55,8 +55,10 @@ services:
       retries: 3
       start_period: 120s
     restart: unless-stopped
-    # Development mode with hot reload
-    command: uvicorn main:app --host 0.0.0.0 --port 9999 --reload
+    # Production mode with multiple workers for handling concurrent requests
+    networks:
+      - default
+      - npm_default
 
 volumes:
   # Volume untuk menyimpan Ollama models
@@ -69,3 +71,5 @@ volumes:
 networks:
   default:
     name: portfolio_network
+  npm_default:
+    external: true

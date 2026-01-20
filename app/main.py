@@ -167,23 +167,17 @@ async def chat(request: ChatRequest):
 )
 async def health_check():
     """
-    Endpoint untuk health check.
+    Endpoint untuk health check (lightweight).
 
     Mengecek status:
     - Aplikasi
-    - Koneksi Ollama
     - Vector Store
+    - Ollama (hanya cek apakah manager sudah di-inisialisasi, tanpa test connection)
     """
     global llm_manager, vector_store_manager
 
-    # Check Ollama status
-    ollama_status = "disconnected"
-    if llm_manager is not None:
-        try:
-            if llm_manager.test_connection():
-                ollama_status = "connected"
-        except Exception:
-            ollama_status = "error"
+    # Check Ollama status (lightweight - tanpa test connection yang blocking)
+    ollama_status = "initialized" if llm_manager is not None and llm_manager.llm is not None else "not_initialized"
 
     # Check vector store status
     vector_store_status = "not_initialized"
@@ -194,9 +188,9 @@ async def health_check():
             vector_store_status = "empty"
 
     # Determine overall status
-    if ollama_status == "connected" and vector_store_status == "ready":
+    if ollama_status == "initialized" and vector_store_status == "ready":
         status = "healthy"
-    elif ollama_status == "disconnected" or vector_store_status in ["not_initialized", "empty"]:
+    elif ollama_status == "not_initialized" or vector_store_status in ["not_initialized", "empty"]:
         status = "degraded"
     else:
         status = "unhealthy"
