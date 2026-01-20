@@ -154,7 +154,10 @@ class LLMManager:
             }
             if any(keyword in lower_question for keyword in contact_keywords):
                 retriever = self.vector_store_manager.get_retriever()
-                docs = retriever.get_relevant_documents(cleaned_question)
+                if hasattr(retriever, "invoke"):
+                    docs = retriever.invoke(cleaned_question)
+                else:
+                    docs = retriever.get_relevant_documents(cleaned_question)
                 contact_lines = []
                 wanted_prefixes = (
                     "Nama:", "Jabatan:", "Lokasi:", "Email:",
