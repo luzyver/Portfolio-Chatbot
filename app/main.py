@@ -1,6 +1,6 @@
 """
 Portfolio Chatbot - FastAPI Application
-RAG-based chatbot menggunakan Ollama (Mistral) dan ChromaDB
+RAG-based chatbot menggunakan Groq API dan ChromaDB
 """
 import os
 import logging
@@ -75,7 +75,7 @@ async def lifespan(app: FastAPI):
             llm_manager.create_qa_chain()
         logger.info("LLM Manager initialized successfully")
     except Exception as e:
-        logger.warning(f"LLM initialization warning: {str(e)}. Chat may not work until Ollama is available.")
+        logger.warning(f"LLM initialization warning: {str(e)}. Chat may not work until Groq is available.")
 
     logger.info("Portfolio Chatbot started successfully!")
 
@@ -88,7 +88,7 @@ async def lifespan(app: FastAPI):
 # Inisialisasi FastAPI app
 app = FastAPI(
     title="Portfolio Chatbot API",
-    description="RAG-based chatbot untuk menjawab pertanyaan tentang portfolio menggunakan Ollama dan ChromaDB",
+    description="RAG-based chatbot untuk menjawab pertanyaan tentang portfolio menggunakan Groq API dan ChromaDB",
     version="1.0.0",
     lifespan=lifespan,
     responses={
@@ -172,12 +172,12 @@ async def health_check():
     Mengecek status:
     - Aplikasi
     - Vector Store
-    - Ollama (hanya cek apakah manager sudah di-inisialisasi, tanpa test connection)
+    - Groq (hanya cek apakah manager sudah di-inisialisasi, tanpa test connection)
     """
     global llm_manager, vector_store_manager
 
-    # Check Ollama status (lightweight - tanpa test connection yang blocking)
-    ollama_status = "initialized" if llm_manager is not None and llm_manager.llm is not None else "not_initialized"
+    # Check Groq status (lightweight - tanpa test connection yang blocking)
+    groq_status = "initialized" if llm_manager is not None and llm_manager.llm is not None else "not_initialized"
 
     # Check vector store status
     vector_store_status = "not_initialized"
@@ -188,16 +188,16 @@ async def health_check():
             vector_store_status = "empty"
 
     # Determine overall status
-    if ollama_status == "initialized" and vector_store_status == "ready":
+    if groq_status == "initialized" and vector_store_status == "ready":
         status = "healthy"
-    elif ollama_status == "not_initialized" or vector_store_status in ["not_initialized", "empty"]:
+    elif groq_status == "not_initialized" or vector_store_status in ["not_initialized", "empty"]:
         status = "degraded"
     else:
         status = "unhealthy"
 
     return HealthResponse(
         status=status,
-        ollama_status=ollama_status,
+        groq_status=groq_status,
         vector_store_status=vector_store_status
     )
 

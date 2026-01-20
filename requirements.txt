@@ -16,8 +16,9 @@ chromadb
 sentence-transformers
 torch
 
-# Ollama
-ollama
+# Groq
+groq
+langchain-groq
 
 # Utilities
 pydantic

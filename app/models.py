@@ -53,14 +53,14 @@ class ChatResponse(BaseModel):
 class HealthResponse(BaseModel):
     """Response model untuk endpoint /health"""
     status: str = Field(..., description="Status kesehatan aplikasi")
-    ollama_status: str = Field(..., description="Status koneksi Ollama")
+    groq_status: str = Field(..., description="Status koneksi Groq")
     vector_store_status: str = Field(..., description="Status vector store")
 
     class Config:
         json_schema_extra = {
             "example": {
                 "status": "healthy",
-                "ollama_status": "connected",
+                "groq_status": "connected",
                 "vector_store_status": "ready"
             }
         }

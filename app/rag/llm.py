@@ -1,12 +1,12 @@
 """
-LLM module untuk integrasi dengan Ollama
-Menggunakan model Mistral untuk generate response
+LLM module untuk integrasi dengan Groq API
+Menggunakan model Groq untuk generate response
 """
 import os
 import logging
 from typing import List, Tuple, Optional
 
-from langchain_community.llms import Ollama
+from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from langchain_classic.chains import RetrievalQA
 from langchain_core.documents import Document
@@ -16,8 +16,8 @@ from .vector_store import VectorStoreManager
 logger = logging.getLogger(__name__)
 
 # Konfigurasi dari environment variables
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-LLM_MODEL = os.getenv("LLM_MODEL", "mistral")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "whisper-large-v3-turbo")
 
 # Custom prompt template dalam Bahasa Indonesia
 PROMPT_TEMPLATE = """Kamu adalah asisten AI untuk portfolio chatbot. Tugasmu adalah menjawab pertanyaan berdasarkan informasi portfolio yang diberikan.
@@ -41,49 +41,51 @@ Jawaban:"""
 
 class LLMManager:
     """
-    Manager untuk mengelola LLM (Ollama) dan RAG chain.
+    Manager untuk mengelola LLM (Groq) dan RAG chain.
     """
 
     def __init__(
         self,
         vector_store_manager: VectorStoreManager,
-        base_url: str = OLLAMA_BASE_URL,
-        model: str = LLM_MODEL
+        model: str = GROQ_MODEL,
+        api_key: Optional[str] = GROQ_API_KEY
     ):
         """
         Inisialisasi LLMManager.
 
         Args:
             vector_store_manager: Instance VectorStoreManager untuk retrieval
-            base_url: URL Ollama service
-            model: Nama model yang digunakan (default: mistral)
+            model: Nama model yang digunakan (default: whisper-large-v3-turbo)
+            api_key: Groq API key
         """
         self.vector_store_manager = vector_store_manager
-        self.base_url = base_url
         self.model = model
-        self.llm: Optional[Ollama] = None
+        self.api_key = api_key
+        self.llm: Optional[ChatGroq] = None
         self.qa_chain = None
 
-        logger.info(f"LLMManager initialized. Ollama URL: {base_url}, Model: {model}")
+        logger.info(f"LLMManager initialized. Groq Model: {model}")
 
-    def initialize_llm(self) -> Ollama:
+    def initialize_llm(self) -> ChatGroq:
         """
-        Inisialisasi koneksi ke Ollama LLM.
+        Inisialisasi koneksi ke Groq LLM.
 
         Returns:
-            Ollama: Instance LLM
+            ChatGroq: Instance LLM
         """
-        logger.info(f"Initializing Ollama LLM: {self.model} at {self.base_url}")
+        if not self.api_key:
+            raise ValueError("GROQ_API_KEY belum di-set")
 
-        self.llm = Ollama(
-            base_url=self.base_url,
+        logger.info(f"Initializing Groq LLM: {self.model}")
+
+        self.llm = ChatGroq(
+            api_key=self.api_key,
             model=self.model,
             temperature=0.3,
-            num_predict=256,
-            num_ctx=1024,
+            max_tokens=256,
         )
 
-        logger.info("Ollama LLM berhasil di-inisialisasi")
+        logger.info("Groq LLM berhasil di-inisialisasi")
         return self.llm
 
     def create_qa_chain(self) -> RetrievalQA:
@@ -200,7 +202,7 @@ class LLMManager:
 
     def test_connection(self) -> bool:
         """
-        Test koneksi ke Ollama service.
+        Test koneksi ke Groq service.
 
         Returns:
             bool: True jika koneksi berhasil
@@ -211,10 +213,11 @@ class LLMManager:
 
             # Simple test invoke
             test_response = self.llm.invoke("Halo, apa kabar?")
-            logger.info(f"Ollama connection test successful: {test_response[:50]}...")
+            preview = test_response.content if hasattr(test_response, "content") else str(test_response)
+            logger.info(f"Groq connection test successful: {preview[:50]}...")
             return True
         except Exception as e:
-            logger.error(f"Ollama connection test failed: {str(e)}")
+            logger.error(f"Groq connection test failed: {str(e)}")
             return False
 
     def refresh_chain(self):
