@@ -28,6 +28,7 @@ ATURAN PENTING:
 3. JANGAN mengarang atau membuat informasi yang tidak ada dalam konteks
 4. Jawab dalam Bahasa Indonesia dengan sopan dan profesional
 5. Berikan jawaban yang ringkas namun informatif
+6. JANGAN menyalin ulang konteks atau pertanyaan; berikan jawaban final saja
 
 Konteks Portfolio:
 {context}
@@ -131,10 +132,45 @@ class LLMManager:
         if self.qa_chain is None:
             self.create_qa_chain()
 
-        logger.info(f"Processing question: {question[:50]}...")
+        cleaned_question = question.strip()
+        logger.info(f"Processing question: {cleaned_question[:50]}...")
+
+        # Fast-path untuk sapaan singkat agar tidak dianggap "kurang informasi".
+        lower_question = cleaned_question.lower()
+        greetings = {
+            "halo", "hai", "hi", "hello", "pagi", "siang", "sore", "malam"
+        }
+        if lower_question in greetings or len(lower_question.split()) <= 1:
+            return (
+                "Halo! Silakan tanya hal spesifik tentang portfolio (misalnya pengalaman kerja, proyek, atau kontak).",
+                []
+            )
 
         try:
-            result = self.qa_chain.invoke({"query": question})
+            # Heuristik sederhana untuk pertanyaan kontak agar tidak gagal di model kecil.
+            contact_keywords = {
+                "kontak", "contact", "email", "linkedin", "github", "website", "web",
+                "nama", "lokasi", "alamat"
+            }
+            if any(keyword in lower_question for keyword in contact_keywords):
+                retriever = self.vector_store_manager.get_retriever()
+                docs = retriever.get_relevant_documents(cleaned_question)
+                contact_lines = []
+                wanted_prefixes = (
+                    "Nama:", "Jabatan:", "Lokasi:", "Email:",
+                    "LinkedIn:", "GitHub:", "Website:"
+                )
+                for doc in docs:
+                    for line in doc.page_content.splitlines():
+                        line = line.strip()
+                        if line.startswith(wanted_prefixes):
+                            contact_lines.append(line)
+                if contact_lines:
+                    response = "\n".join(contact_lines)
+                    logger.info("Contact info answered via heuristic extraction.")
+                    return response, docs
+
+            result = self.qa_chain.invoke({"query": cleaned_question})
 
             response = result.get("result", "Maaf, terjadi kesalahan dalam memproses pertanyaan.")
             source_docs = result.get("source_documents", [])
