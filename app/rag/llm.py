@@ -78,7 +78,7 @@ class LLMManager:
             model=self.model,
             temperature=0.3,
             num_predict=256,
-            num_ctx=512,
+            num_ctx=1024,
         )
 
         logger.info("Ollama LLM berhasil di-inisialisasi")

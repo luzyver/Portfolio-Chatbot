@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Pre-download the embedding model during build time
 # This ensures the model is available offline after build
 RUN python -c "from sentence_transformers import SentenceTransformer; \
-    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2'); \
+    model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'); \
     print('Embedding model downloaded successfully')"
 
 # Copy application code

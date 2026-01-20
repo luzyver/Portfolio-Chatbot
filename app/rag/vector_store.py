@@ -20,7 +20,7 @@ CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
 COLLECTION_NAME = "portfolio_collection"
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
-RETRIEVER_K = 3
+RETRIEVER_K = 4
 
 
 class VectorStoreManager:

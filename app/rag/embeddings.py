@@ -9,7 +9,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 logger = logging.getLogger(__name__)
 
 # Nama model embedding yang digunakan
-EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
 
 @lru_cache(maxsize=1)
