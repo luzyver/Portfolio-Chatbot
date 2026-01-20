@@ -28,7 +28,8 @@ ATURAN PENTING:
 3. JANGAN mengarang atau membuat informasi yang tidak ada dalam konteks
 4. Jawab dalam Bahasa Indonesia dengan sopan dan profesional
 5. Berikan jawaban yang ringkas namun informatif
-6. JANGAN menyalin ulang konteks atau pertanyaan; berikan jawaban final saja
+6. Gunakan bahasa yang natural dan bervariasi; hindari frasa yang monoton
+7. JANGAN menyalin ulang konteks atau pertanyaan; berikan jawaban final saja
 
 Konteks Portfolio:
 {context}
@@ -142,7 +143,7 @@ class LLMManager:
         }
         if lower_question in greetings or len(lower_question.split()) <= 1:
             return (
-                "Halo! Silakan tanya hal spesifik tentang portfolio (misalnya pengalaman kerja, proyek, atau kontak).",
+                "Halo! Kamu bisa tanya hal spesifik tentang portfolio, misalnya pengalaman kerja, proyek, atau kontak.",
                 []
             )
 
@@ -177,6 +178,17 @@ class LLMManager:
 
             response = result.get("result", "Maaf, terjadi kesalahan dalam memproses pertanyaan.")
             source_docs = result.get("source_documents", [])
+
+            # Variasi respons agar tidak monoton saat info tidak tersedia.
+            not_available_phrases = [
+                "Maaf, informasi itu belum tersedia di portfolio.",
+                "Belum ada informasi tersebut di portfolio yang saya miliki.",
+                "Sepertinya informasi itu tidak tercantum di portfolio saat ini.",
+            ]
+            default_not_available = "Maaf, informasi tersebut tidak tersedia dalam portfolio"
+            if default_not_available.lower() in response.lower():
+                index_seed = sum(ord(ch) for ch in cleaned_question) % len(not_available_phrases)
+                response = not_available_phrases[index_seed]
 
             logger.info(f"Response generated. Sources: {len(source_docs)}")
 
