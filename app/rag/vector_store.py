@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
 COLLECTION_NAME = "portfolio_collection"
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 50
-RETRIEVER_K = 50
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "50"))
+RETRIEVER_K = int(os.getenv("RETRIEVER_K", "10"))
 
 
 class VectorStoreManager:
