@@ -3,7 +3,7 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 
 from models import (
@@ -25,6 +25,12 @@ BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 PORTFOLIO_FILE = DATA_DIR / "portfolio.json"
 CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", str(BASE_DIR / "chroma_db"))
+ALLOWED_ORIGINS = [origin.strip() for origin in os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://localhost:9999"
+).split(",") if origin.strip()]
+ALLOW_CREDENTIALS = os.getenv("ALLOW_CREDENTIALS", "false").lower() == "true"
+RELOAD_TOKEN = os.getenv("RELOAD_TOKEN")
 
 vector_store_manager: VectorStoreManager = None
 llm_manager: LLMManager = None
@@ -82,8 +88,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=ALLOW_CREDENTIALS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -163,8 +169,27 @@ async def health_check():
     summary="Reload Portfolio Data",
     description="Reload data portfolio dari file dan rebuild vector store"
 )
-async def reload_data():
+async def reload_data(
+    reload_token: str | None = Header(default=None, alias="X-Reload-Token"),
+    authorization: str | None = Header(default=None, alias="Authorization")
+):
     global vector_store_manager, llm_manager
+
+    if not RELOAD_TOKEN:
+        raise HTTPException(
+            status_code=500,
+            detail="RELOAD_TOKEN belum dikonfigurasi"
+        )
+
+    bearer_token = None
+    if authorization and authorization.lower().startswith("bearer "):
+        bearer_token = authorization.split(" ", 1)[1].strip()
+
+    if RELOAD_TOKEN not in {reload_token, bearer_token}:
+        raise HTTPException(
+            status_code=401,
+            detail="Token tidak valid untuk reload data"
+        )
 
     if vector_store_manager is None:
         raise HTTPException(
