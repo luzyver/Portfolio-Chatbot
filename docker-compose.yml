@@ -10,7 +10,13 @@ services:
       - ./app:/app
     environment:
       - GROQ_API_KEY=${GROQ_API_KEY}
-      - CHROMA_PERSIST_DIR=/app/chroma_db
+      - CHROMA_PERSIST_DIR=${CHROMA_PERSIST_DIR}
+      - CHUNK_SIZE=${CHUNK_SIZE}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP}
+      - RETRIEVER_K=${RETRIEVER_K}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - ALLOW_CREDENTIALS=${ALLOW_CREDENTIALS}
+      - RELOAD_TOKEN=${RELOAD_TOKEN}
       - PYTHONPATH=/app
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9999/health"]
