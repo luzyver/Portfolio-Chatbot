@@ -116,7 +116,11 @@ async def chat(request: ChatRequest):
     try:
         logger.info(f"Received chat request: {request.message[:50]}...")
 
-        response, _ = llm_manager.chat(request.message)
+        history = None
+        if request.history:
+            history = [{"role": msg.role, "content": msg.content} for msg in request.history]
+
+        response, _ = llm_manager.chat(request.message, history=history)
 
         return ChatResponse(response=response)
 

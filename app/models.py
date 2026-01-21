@@ -2,6 +2,11 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
+class ChatMessage(BaseModel):
+    role: str = Field(..., description="Role: 'user' atau 'assistant'")
+    content: str = Field(..., description="Isi pesan")
+
+
 class ChatRequest(BaseModel):
     message: str = Field(
         ...,
@@ -9,11 +14,19 @@ class ChatRequest(BaseModel):
         min_length=1,
         max_length=1000
     )
+    history: Optional[List[ChatMessage]] = Field(
+        default=None,
+        description="Riwayat percakapan sebelumnya"
+    )
 
     class Config:
         json_schema_extra = {
             "example": {
-                "message": "Apa saja skill programming yang kamu miliki?"
+                "message": "Apa saja skill programming yang kamu miliki?",
+                "history": [
+                    {"role": "user", "content": "Halo"},
+                    {"role": "assistant", "content": "Halo! Ada yang bisa saya bantu?"}
+                ]
             }
         }
 

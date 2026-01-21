@@ -38,11 +38,12 @@ ATURAN PENTING:
 5. Berikan jawaban yang ringkas namun informatif
 6. Gunakan bahasa yang natural dan bervariasi; hindari frasa yang monoton
 7. JANGAN menyalin ulang konteks atau pertanyaan; berikan jawaban final saja
+8. Perhatikan riwayat percakapan (jika ada) untuk menjaga konteks dan kontinuitas
 
 Konteks Portfolio:
 {context}
 
-Pertanyaan: {question}
+{question}
 
 Jawaban:"""
 
@@ -116,12 +117,24 @@ class LLMManager:
         self.create_qa_chain()
         logger.info(f"Successfully switched to model: {new_model}")
 
-    def chat(self, question: str) -> Tuple[str, List[Document]]:
+    def _format_history(self, history: Optional[List[dict]] = None) -> str:
+        if not history:
+            return ""
+
+        formatted = "Percakapan sebelumnya:\n"
+        for msg in history:
+            role = "User" if msg.get("role") == "user" else "Asisten"
+            formatted += f"{role}: {msg.get('content', '')}\n"
+        formatted += "\n"
+        return formatted
+
+    def chat(self, question: str, history: Optional[List[dict]] = None) -> Tuple[str, List[Document]]:
         if self.qa_chain is None:
             self.create_qa_chain()
 
         cleaned_question = question.strip()
-        logger.info(f"Processing question: {cleaned_question[:50]}...")
+        history_text = self._format_history(history)
+        logger.info(f"Processing question: {cleaned_question[:50]}... (history: {len(history) if history else 0} messages)")
 
         models_to_try = [self.model] + [m for m in FALLBACK_MODELS if m != self.model]
         last_error = None
@@ -131,7 +144,8 @@ class LLMManager:
                 if model != self.model:
                     self.switch_model(model)
 
-                result = self.qa_chain.invoke({"query": cleaned_question})
+                query_with_history = f"{history_text}Pertanyaan: {cleaned_question}" if history_text else cleaned_question
+                result = self.qa_chain.invoke({"query": query_with_history})
 
                 response = result.get("result", "Maaf, terjadi kesalahan dalam memproses pertanyaan.")
                 source_docs = result.get("source_documents", [])
