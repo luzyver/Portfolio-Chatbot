@@ -12,11 +12,11 @@ from .embeddings import get_embeddings
 
 logger = logging.getLogger(__name__)
 
-CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
+CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR")
 COLLECTION_NAME = "portfolio_collection"
-CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
-CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "50"))
-RETRIEVER_K = int(os.getenv("RETRIEVER_K", "10"))
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE"))
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP"))
+RETRIEVER_K = int(os.getenv("RETRIEVER_K"))
 
 
 class VectorStoreManager:

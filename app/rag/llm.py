@@ -27,7 +27,6 @@ FALLBACK_MODELS = [
 ]
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_MODEL = os.getenv("GROQ_MODEL", FALLBACK_MODELS[0])
 
 PROMPT_TEMPLATE = """Kamu adalah asisten AI untuk portfolio chatbot. Tugasmu adalah menjawab pertanyaan berdasarkan informasi portfolio yang diberikan.
 
@@ -52,7 +51,7 @@ class LLMManager:
     def __init__(
         self,
         vector_store_manager: VectorStoreManager,
-        model: str = GROQ_MODEL,
+        model: str = FALLBACK_MODELS[0],
         api_key: Optional[str] = GROQ_API_KEY
     ):
         self.vector_store_manager = vector_store_manager

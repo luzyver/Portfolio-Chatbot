@@ -24,12 +24,9 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 PORTFOLIO_FILE = DATA_DIR / "portfolio.json"
-CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", str(BASE_DIR / "chroma_db"))
-ALLOWED_ORIGINS = [origin.strip() for origin in os.getenv(
-    "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://localhost:9999"
-).split(",") if origin.strip()]
-ALLOW_CREDENTIALS = os.getenv("ALLOW_CREDENTIALS", "false").lower() == "true"
+CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR")
+ALLOWED_ORIGINS = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS").split(",") if origin.strip()]
+ALLOW_CREDENTIALS = os.getenv("ALLOW_CREDENTIALS").lower() == "true"
 RELOAD_TOKEN = os.getenv("RELOAD_TOKEN")
 
 vector_store_manager: VectorStoreManager = None
