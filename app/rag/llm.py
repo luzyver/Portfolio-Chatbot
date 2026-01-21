@@ -73,7 +73,7 @@ class LLMManager:
             api_key=self.api_key,
             model=self.model,
             temperature=0.3,
-            max_tokens=256,
+            max_tokens=1024,
         )
 
         logger.info("Groq LLM berhasil di-inisialisasi")
